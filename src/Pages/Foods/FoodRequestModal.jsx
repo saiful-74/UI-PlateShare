@@ -28,7 +28,7 @@ const FoodRequestModal = ({ food, onClose }) => {
       status: "pending",
     };
 
-    fetch("https://plateshare-server-mu.vercel.app/food-requests", {
+    fetch("https://backend-plate-share.vercel.app/foods", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(requestData),

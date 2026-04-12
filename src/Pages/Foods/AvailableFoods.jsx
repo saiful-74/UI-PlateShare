@@ -12,7 +12,7 @@ const AvailableFoods = () => {
   const fetchFoods = async () => {
     setLoading(true);
     try {
-      // ✅ requirement অনুযায়ী শুধু Available items
+      /// ✅ Only fetch foods with status "Available"
       const res = await api.get("/foods", { params: { status: "Available" } });
       setFoods(Array.isArray(res.data) ? res.data : []);
     } catch (error) {
@@ -27,7 +27,7 @@ const AvailableFoods = () => {
   useEffect(() => {
     fetchFoods();
 
-    // ✅ AddFood success হলে এই event fire হয়, এখানে শুনে refresh করবে
+    // Listen for "foodAdded" event to refresh the list when a new food is added
     const handleFoodAdded = () => fetchFoods();
     window.addEventListener("foodAdded", handleFoodAdded);
 

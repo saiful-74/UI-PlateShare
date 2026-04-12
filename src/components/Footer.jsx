@@ -55,7 +55,7 @@ const Footer = () => {
         
         <div className="flex flex-col md:flex-row items-center justify-between text-gray-600 gap-4 text-sm">
 
-          <p>© 2020 Plateshare All rights reserved.</p>
+          <p>© 2026 Plateshare All rights reserved.</p>
 
           <div className="flex gap-6">
             <p>Terms of Service</p>
