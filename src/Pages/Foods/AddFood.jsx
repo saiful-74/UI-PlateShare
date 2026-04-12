@@ -1,0 +1,123 @@
+import { uploadToImgbb } from "../../Utils/uploadToImgbb";
+import { api } from "../../Utils/axiosInstance";
+import React, { useContext, useState } from "react";
+import { toast } from "react-toastify";
+import { AuthContext } from "../../Context/AuthProvider";
+
+const AddFood = () => {
+  const { user } = useContext(AuthContext);
+  const [loading, setLoading] = useState(false);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    if (!user?.email) {
+      toast.error("Please login first!");
+      return;
+    }
+
+    const form = e.target;
+
+    try {
+      setLoading(true);
+
+      // ✅ file input
+      const imageFile = form.foodImage.files?.[0];
+      if (!imageFile) {
+        toast.error("Please select a food image!");
+        return;
+      }
+
+      // ✅ upload to imgbb
+      const imageUrl = await uploadToImgbb(imageFile);
+
+      const foodData = {
+        food_name: form.foodName.value.trim(),
+        food_image: imageUrl,
+        food_quantity: Number(form.foodQuantity.value),
+        pickup_location: form.pickupLocation.value.trim(),
+        expire_date: form.expireDate.value,
+        additional_notes: form.additionalNotes.value?.trim() || "",
+        food_status: "available", // ✅ keep consistent lowercase
+        donator_name: user?.displayName || "Unknown",
+        donator_email: user?.email,
+        donator_photo: user?.photoURL || "",
+      };
+
+      const res = await api.post("/add-food", foodData);
+      const data = res.data;
+
+      if (data?.insertedId || data?.acknowledged) {
+        toast.success("Food added successfully!");
+        form.reset();
+        window.dispatchEvent(new Event("foodAdded"));
+      } else {
+        toast.error("Food not added.");
+        console.log("Response:", data);
+      }
+    } catch (err) {
+      console.error(err);
+      toast.error(err.message || "Failed to add food");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="max-w-2xl mx-auto my-12 p-8 bg-white rounded-xl shadow-lg">
+      <title>Add Food | Plateshare</title>
+
+      <h2 className="text-3xl font-bold text-center mb-8">Add New Food</h2>
+
+      <form onSubmit={handleSubmit} className="space-y-5">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+          <div className="space-y-2">
+            <label className="font-medium">Food Name :</label>
+            <input type="text" name="foodName" className="input input-bordered w-full" required />
+          </div>
+
+          <div className="space-y-2">
+            <label className="font-medium">Food Image :</label>
+            <input
+              type="file"
+              name="foodImage"
+              accept="image/*"
+              className="file-input file-input-bordered w-full"
+              required
+            />
+          </div>
+
+          <div className="space-y-2">
+            <label className="font-medium">Food Quantity :</label>
+            <input type="number" name="foodQuantity" min="1" className="input input-bordered w-full" required />
+          </div>
+
+          <div className="space-y-2">
+            <label className="font-medium">Pickup Location :</label>
+            <input type="text" name="pickupLocation" className="input input-bordered w-full" required />
+          </div>
+
+          <div className="space-y-2 md:col-span-2">
+            <label className="font-medium">Expire Date :</label>
+            <input type="date" name="expireDate" className="input input-bordered w-full" required />
+          </div>
+        </div>
+
+        <div className="space-y-2">
+          <label className="font-medium">Additional Notes :</label>
+          <textarea name="additionalNotes" className="textarea textarea-bordered w-full h-28" rows="4"></textarea>
+        </div>
+
+        <button
+          type="submit"
+          disabled={loading}
+          className="btn btn-success cursor-pointer w-full text-amber-300 text-lg"
+        >
+          {loading ? "Adding..." : "Add Food"}
+        </button>
+      </form>
+    </div>
+  );
+};
+
+export default AddFood;
