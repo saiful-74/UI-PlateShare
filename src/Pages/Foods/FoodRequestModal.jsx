@@ -65,14 +65,20 @@ const FoodRequestModal = ({ food, onClose }) => {
           required
         ></textarea>
 
-        <input
-          name="contact"
-          type="text"
-          placeholder="Contact number"
-          className="input input-bordered w-full"
-          onChange={handleChange}
-          required
-        />
+        <div>
+  <input
+    name="contact"
+    type="text"
+    placeholder="+8801XXXXXXXXXX"
+    value={form.contact}
+    className={`input input-bordered w-full ${contactError ? 'input-error' : ''}`}
+    onChange={handleChange}
+    required
+  />
+  {contactError && (
+    <p className="text-error text-xs mt-1">{contactError}</p>
+  )}
+</div>
 
         <div className="modal-action justify-center">
           <button type="submit" className="btn btn-primary">
