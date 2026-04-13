@@ -1,1 +1,1 @@
-Live link: https://plateshare-client-iota.vercel.app/
+Live link: https://ui-plate-share.vercel.app/

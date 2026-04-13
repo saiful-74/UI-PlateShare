@@ -21,7 +21,7 @@ const FeaturedProducts = () => {
         setLoading(true);
         
         const res = await api.get("/foods", { 
-          params: { status: "Available", limit: 10 }
+          params: { status: "available", limit: 10 }
         });
         
         const data = res.data?.foods || res.data || [];
